@@ -1,0 +1,25 @@
+{% extends "base_template.html" %}
+
+{% block title %} Library of Ruina {% endblock %}
+
+{% block content %}
+<h1>Library of Ruina</h1>
+
+  <p>Welcome to <em>Library of Ruina</em>, a my first study project</p>
+
+<h2>Dynamic content</h2>
+
+  <p>The library has the following record counts:</p>
+  <ul>
+    <li><strong>Books:</strong> {{ num_books }}</li>
+    <li><strong>Copies:</strong> {{ num_instance }}</li>
+    <li><strong>Copies available:</strong> {{ num_instances_available }}</li>
+    <li><strong>Authors:</strong> {{ num_authors }}</li>
+    <li><strong>Genres:</strong> {{ num_genre }}</li>
+    <li><strong>Languages:</strong> {{ num_language }}</li>
+    <li><strong>Books has genre classic:</strong> {{ classic_books }}</li>
+    <li><strong>Example books has genre classic:</strong> {{ classic_book.0.title }}</li>
+  </ul>
+  <p>You have visited this page {{ num_visits }}{% if num_visits == 1 %} time{% else %} times{% endif %}.</p>
+
+{% endblock %}

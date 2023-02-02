@@ -31,6 +31,9 @@ class Autor(models.Model):
     def get_absolute_url(self):
         return reverse('author-detail', args=[str(self.id)])
 
+    class Meta:
+        ordering = ["last_name"]
+
     def __str__(self):
         return "%s %s" % (self.last_name, self.first_name)
 
@@ -50,6 +53,8 @@ class Book(models.Model):
     language = models.ForeignKey(Language,
                                  on_delete=models.SET_NULL,
                                  null=True)
+    class Meta:
+        ordering = ["isbn"]
 
     def __str__(self):
         return self.title
