@@ -1,0 +1,20 @@
+{% extends "base_template.html" %}
+
+{% block content %}
+    <h1>User Borrowed List</h1>
+
+    {% if allborrowed %}
+    <ul>
+
+      {% for borrowed in allborrowed %}
+      <li class="{% if borrowed.is_overdue %}text-danger{% endif %}">
+        <a href="{% url 'book-detail' borrowed.book.pk %}">{{ borrowed.book.title }}</a>
+          ({{ borrowed.due_back }}) from user: {{ borrowed.user }}
+      </li>
+      {% endfor %}
+    </ul>
+
+    {% else %}
+      <p>There are no borrowed.</p>
+    {% endif %}
+{% endblock %}
