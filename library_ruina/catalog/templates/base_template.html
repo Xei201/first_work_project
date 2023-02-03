@@ -40,8 +40,10 @@
             <ul class="sidebar-nav">
                 {% if perms.catalog.can_mark_returned %}
                     <li>Staff</li>
-                    <li><a href="{% url 'all-borrowed' %}">My Borrowed</a> </li>
-                    {% endif %}
+                    <li><a href="{% url 'all-borrowed' %}">All Borrowed</a> </li>
+                    <li><a href="{% url 'author-create' %}">Add author</a> </li>
+                    <li><a href="{% url 'book-create' %}">Add book</a> </li>
+                {% endif %}
             </ul>
      {% endblock %}
       </div>

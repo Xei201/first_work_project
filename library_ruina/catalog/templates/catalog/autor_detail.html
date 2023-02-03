@@ -3,6 +3,13 @@
 {% block content %}
   <h1>Author: {{ author.last_name }}, {{ author.first_name }}</h1>
 
+  {% if perms.catalog.can_mark_returned %}
+    <p>
+      <a href="{% url 'author-update' author.pk %}">Update</a> |
+      <a href="{% url 'author-delete' author.pk %}">Delete</a>
+    </p>
+  {% endif %}
+
   <p><strong>Life dates:</strong> {{ author.date_of_birth }} - {{ author.date_of_death }}</p>
 
   <div style="margin-left:20px;margin-top:20px">

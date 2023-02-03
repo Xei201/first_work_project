@@ -1,7 +1,7 @@
 {% extends "base_template.html" %}
 
 {% block content %}
-    <h1>User Borrowed List</h1>
+    <h1>Borrowed books</h1>
 
     {% if allborrowed %}
     <ul>
@@ -9,7 +9,8 @@
       {% for borrowed in allborrowed %}
       <li class="{% if borrowed.is_overdue %}text-danger{% endif %}">
         <a href="{% url 'book-detail' borrowed.book.pk %}">{{ borrowed.book.title }}</a>
-          ({{ borrowed.due_back }}) from user: {{ borrowed.user }}
+          ({{ borrowed.due_back }}) from user: {{ borrowed.borrower }}
+          {% if perms.catalog.can_mark_returned %}- <a href="{% url 'renew-book-librarian' borrowed.id %}">Renew</a>  {% endif %}
       </li>
       {% endfor %}
     </ul>
