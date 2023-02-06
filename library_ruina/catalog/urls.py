@@ -1,7 +1,8 @@
 from . import views
-from django.urls import re_path
+from django.urls import re_path, path
 
 urlpatterns = [
+    path("all", views.test),
     re_path(r"^$", views.index, name="index"),
     re_path(r"^books$", views.BookListView.as_view(), name="books"),
     re_path(r"^authors$", views.AutorListView.as_view(), name="authors"),

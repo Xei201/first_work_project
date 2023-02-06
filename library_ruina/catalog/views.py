@@ -5,7 +5,7 @@ from django.contrib.auth.decorators import login_required, permission_required
 from django.views import generic
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponse
 from django.urls import reverse, reverse_lazy
 import datetime
 
@@ -147,3 +147,10 @@ class BookDelete(PermissionRequiredMixin, DeleteView):
     model = Book
     success_url = reverse_lazy('books')
     template_name = "catalog/book_confirm_delete.html"
+
+
+def test(request):
+    genre = Genre.objects.create(name="Army")
+    book = Book.objects.create(title='War', genre=genre, isbn="12385678912", summary='test2')
+    book.genre.add(genre)
+    return HttpResponse("<h1>TEST</h1>")
