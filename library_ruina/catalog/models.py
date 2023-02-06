@@ -5,6 +5,9 @@ from django.contrib.auth.models import User
 from datetime import date
 
 
+def get_default_field_id():
+    return uuid.uuid4()
+
 class Genre(models.Model):
     name = models.CharField(max_length=200,
                             help_text="Enter a book genre (e.g. Science Fiction")
@@ -29,7 +32,6 @@ class Autor(models.Model):
     date_of_death = models.DateField("died",
                                      null=True,
                                      blank=True)
-
     def get_absolute_url(self):
         return reverse('author-detail', args=[str(self.id)])
 
@@ -71,6 +73,7 @@ class Book(models.Model):
 
 class BookInstance(models.Model):
     id = models.UUIDField(primary_key=True,
+                          default=get_default_field_id,
                           help_text="Unique ID for this particular book across whole library")
     book = models.ForeignKey(Book,
                              on_delete=models.SET_NULL,
@@ -99,9 +102,6 @@ class BookInstance(models.Model):
     class Meta:
         ordering = ["due_back"]
         permissions = (("can_mark_returned", "Set book as returned"),)
-
-    def get
-
 
     def __str__(self):
         return "%s: (%s)" % (self.id, self.book.title)
