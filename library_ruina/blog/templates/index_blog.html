@@ -1,0 +1,18 @@
+{% extends "base_blog_template.html" %}
+
+{% block title %} Library of Ruina Blog {% endblock %}
+
+{% block content %}
+<h1>Library of Ruina BLOG</h1>
+
+  <p>Welcome to <em>Library of Ruina BLOG</em>, a my first study project</p>
+
+<h2>Dynamic content</h2>
+
+  <p>The library has the following record counts:</p>
+  <ul>
+    <li><strong>Blogs:</strong> {{ num_blogs }}</li>
+    <li><strong>Bloggers:</strong> {{ num_bloggers }}</li>
+  </ul>
+
+{% endblock %}

@@ -1,0 +1,17 @@
+{% extends "base_blog_template.html" %}
+
+{% block content %}
+  <h1>Blogger: {{ blogger.name }}</h1>
+
+  <p><strong>Create dates:</strong> {{ blogger.create_date }}</p>
+  <p><strong>Count blogs: {{ blogger.blog_set.all.count }}</strong></p>
+
+  <div style="margin-left:20px;margin-top:20px">
+    <h4>Blogs</h4>
+
+    {% for blog in blogger.blog_set.all %}
+    <hr>
+    <p><a href="{{ blog.get_absolute_url }}">{{ blog.title }}</a> Post date: {{ blog.create_date }} </p>
+    {% endfor %}
+  </div>
+{% endblock %}

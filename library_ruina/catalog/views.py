@@ -49,6 +49,7 @@ class BookListView(LoginRequiredMixin, generic.ListView):
         return context
 
 
+
 class BookDetailView(generic.DetailView):
     model = Book
     context_object_name = "book"
