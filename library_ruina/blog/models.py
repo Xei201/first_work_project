@@ -9,6 +9,8 @@ def actual_date():
 
 
 class Blogger(models.Model):
+    """Модель данных блогера"""
+
     name = models.CharField(max_length=100, help_text="Enter a name blogger")
     description = models.TextField(max_length=2000, help_text="Enter a description of blogger")
     create_date = models.DateTimeField(default=actual_date, blank=True, null=True)
@@ -25,6 +27,8 @@ class Blogger(models.Model):
 
 
 class Blog(models.Model):
+    """Модель поста в блоге"""
+
     title = models.CharField(max_length=100)
     context = models.TextField(max_length=2000)
     create_date = models.DateTimeField(default=actual_date, blank=True, null=True)
@@ -46,6 +50,8 @@ class Blog(models.Model):
 
 
 class Comment(models.Model):
+    """Модель хранит комментарий к посту в блоге """
+
     text = models.TextField(max_length=1000)
     blog = models.ForeignKey(Blog, on_delete=models.SET_NULL, null=True)
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)

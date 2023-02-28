@@ -6,11 +6,15 @@ from datetime import date
 
 
 def get_default_field_id():
+    """Генерация uuid token"""
+
     return uuid.uuid4()
 
+
 class Genre(models.Model):
-    name = models.CharField(max_length=200,
-                            help_text="Enter a book genre (e.g. Science Fiction")
+    """Модель языков книг"""
+
+    name = models.CharField(max_length=200, help_text="Enter a book genre (e.g. Science Fiction")
 
     def __str__(self):
         return self.name
@@ -25,13 +29,13 @@ class Language(models.Model):
 
 
 class Autor(models.Model):
+    """Модель содержит данные автора"""
+
     first_name = models.CharField(max_length=200)
     last_name = models.CharField(max_length=200)
-    date_of_birth = models.DateField(null=True,
-                                     blank=True)
-    date_of_death = models.DateField("died",
-                                     null=True,
-                                     blank=True)
+    date_of_birth = models.DateField(null=True, blank=True)
+    date_of_death = models.DateField("died", null=True, blank=True)
+
     def get_absolute_url(self):
         return reverse('author-detail', args=[str(self.id)])
 
@@ -43,20 +47,15 @@ class Autor(models.Model):
 
 
 class Book(models.Model):
+    """Модель содержит данные книги"""
+
     title = models.CharField(max_length=200)
-    author = models.ForeignKey(Autor,
-                               on_delete=models.SET_NULL,
-                               null=True)
-    genre = models.ManyToManyField(Genre,
-                                   help_text="Select a genre")
-    isbn = models.CharField("ISBN",
-                            max_length=13,
-                            help_text="ISBN number")
-    summary = models.TextField(max_length=2000,
-                               help_text="Enter a brief description of the book")
-    language = models.ForeignKey(Language,
-                                 on_delete=models.SET_NULL,
-                                 null=True)
+    author = models.ForeignKey(Autor, on_delete=models.SET_NULL, null=True)
+    genre = models.ManyToManyField(Genre, help_text="Select a genre")
+    isbn = models.CharField("ISBN", max_length=13, help_text="ISBN number")
+    summary = models.TextField(max_length=2000, help_text="Enter a brief description of the book")
+    language = models.ForeignKey(Language, on_delete=models.SET_NULL, null=True)
+
     class Meta:
         ordering = ["isbn"]
 
@@ -72,19 +71,13 @@ class Book(models.Model):
 
 
 class BookInstance(models.Model):
-    id = models.UUIDField(primary_key=True,
-                          default=get_default_field_id,
+    """Модель экземпляра книги, хранит данных о бронировании и бронирующем юзере"""
+    id = models.UUIDField(primary_key=True, default=get_default_field_id,
                           help_text="Unique ID for this particular book across whole library")
-    book = models.ForeignKey(Book,
-                             on_delete=models.SET_NULL,
-                             null=True)
+    book = models.ForeignKey(Book, on_delete=models.SET_NULL, null=True)
     imprint = models.CharField(max_length=200)
-    due_back = models.DateField(null=True,
-                                blank=True)
-    borrower = models.ForeignKey(User,
-                                 on_delete=models.SET_NULL,
-                                 null=True,
-                                 blank=True)
+    due_back = models.DateField(null=True, blank=True)
+    borrower = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
 
     LOAD_STATUS = (
         ("m", "Maitenance"),
@@ -93,11 +86,8 @@ class BookInstance(models.Model):
         ("r", "Reserved")
     )
 
-    status = models.CharField(max_length=1,
-                              choices=LOAD_STATUS,
-                              default='m',
-                              blank=True,
-                              help_text="Book availability")
+    status = models.CharField(max_length=1, choices=LOAD_STATUS, default='m',
+                              blank=True, help_text="Book availability")
 
     class Meta:
         ordering = ["due_back"]
@@ -108,9 +98,13 @@ class BookInstance(models.Model):
 
     @property
     def is_overdue(self):
+        """Проверка валидности даты"""
         if self.due_back and date.today() > self.due_back:
             return True
         return False
+
+
+
 
 
 

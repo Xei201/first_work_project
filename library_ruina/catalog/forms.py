@@ -5,6 +5,8 @@ from django.utils.translation import gettext_lazy as _
 
 
 class RenewBookForm(forms.Form):
+    """Форма принимает данные для корректировки бронирования"""
+
     renewal_date = forms.DateField(help_text="Enter a date between now and 4 weeks.")
 
     def clean_renewal_date(self):

@@ -1,17 +1,27 @@
+import datetime
+import logging
+
 from django.shortcuts import render, get_object_or_404
-from .models import Book, Autor, Genre, Language, BookInstance
-from .forms import RenewBookForm
 from django.contrib.auth.decorators import login_required, permission_required
 from django.views import generic
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
-from django.http import HttpResponseRedirect, HttpResponse
+from django.http import HttpResponseRedirect
 from django.urls import reverse, reverse_lazy
-import datetime
+
+from integration.exception import BaseExceptions, base_exception
+from .models import Book, Autor, Genre, Language, BookInstance
+from .forms import RenewBookForm
 
 
-#@login_required()
+logger = logging.getLogger(__name__)
+
+
+@base_exception
+@login_required()
 def index(request):
+    """Главная страница с выводом статистики приложения"""
+
     num_books = Book.objects.all().count()
     num_instance = BookInstance.objects.all().count()
     num_instances_available = BookInstance.objects.filter(status__exact="a").count()
@@ -36,7 +46,8 @@ def index(request):
     })
 
 
-class BookListView(LoginRequiredMixin, generic.ListView):
+class BookListView(LoginRequiredMixin, BaseExceptions, generic.ListView):
+    """Список всех книг в БД"""
     login_url = "/accounts/login/"
     redirect_field_name = "redirect_to"
     model = Book
@@ -49,24 +60,31 @@ class BookListView(LoginRequiredMixin, generic.ListView):
         return context
 
 
+class BookDetailView(BaseExceptions, generic.DetailView):
+    """Вывод данных конкретной книги"""
 
-class BookDetailView(generic.DetailView):
     model = Book
     context_object_name = "book"
 
 
-class AutorListView(generic.ListView):
+class AutorListView(BaseExceptions, generic.ListView):
+    """Список авторов в системе"""
+
     model = Autor
     context_object_name = "list_author"
     paginate_by = 4
 
 
-class AutorDetailView(generic.DetailView):
+class AutorDetailView(BaseExceptions, generic.DetailView):
+    """Вывод данных конкретного автора"""
+
     model = Autor
     context_object_name = "author"
 
 
-class LoanedBooksByUserListView(LoginRequiredMixin, generic.ListView):
+class LoanedBooksByUserListView(BaseExceptions, LoginRequiredMixin, generic.ListView):
+    """Список книг забронированный авторизованным пользователем"""
+
     model = BookInstance
     template_name = 'catalog/bookinstance_list_borrowed_user.html'
     context_object_name = "bookinstance_list"
@@ -76,7 +94,9 @@ class LoanedBooksByUserListView(LoginRequiredMixin, generic.ListView):
         return BookInstance.objects.filter(borrower=self.request.user).filter(status__exact='o').order_by('due_back')
 
 
-class AllBorrowedListView(PermissionRequiredMixin, generic.ListView):
+class AllBorrowedListView(BaseExceptions, PermissionRequiredMixin, generic.ListView):
+    """Все забронированные книги"""
+
     permission_required = ('catalog.can_mark_returned', 'catalog.can_edit')
     model = BookInstance
     context_object_name = "allborrowed"
@@ -89,6 +109,8 @@ class AllBorrowedListView(PermissionRequiredMixin, generic.ListView):
 
 @permission_required("catalog.can_mark_returned")
 def renew_book_librarian(request, pk):
+    """Корректировка сделанного бронирования книги"""
+
     book_inst = get_object_or_404(BookInstance, pk=pk)
 
     if request.method == "POST":
@@ -107,7 +129,9 @@ def renew_book_librarian(request, pk):
                                                                  "bookinst": book_inst})
 
 
-class AutorCreateView(PermissionRequiredMixin, CreateView):
+class AutorCreateView(BaseExceptions, PermissionRequiredMixin, CreateView):
+    """Страница создания нового автора"""
+
     permission_required = ("catalog.can_mark_returned",)
     model = Autor
     fields = "__all__"
@@ -115,43 +139,48 @@ class AutorCreateView(PermissionRequiredMixin, CreateView):
     template_name = "catalog/author_form.html"
 
 
-class AutorUpdate(PermissionRequiredMixin, UpdateView):
+class AutorUpdate(BaseExceptions, PermissionRequiredMixin, UpdateView):
+    """Обновление даных автора"""
+
     permission_required = ("catalog.can_mark_returned",)
     model = Autor
     fields = ["first_name", "last_name", "date_of_birth", "date_of_death"]
     template_name = "catalog/author_form.html"
 
 
-class AutorDelete(PermissionRequiredMixin, DeleteView):
+class AutorDelete(BaseExceptions, PermissionRequiredMixin, DeleteView):
+    """Удаление автора"""
+
     permission_required = ("catalog.can_mark_returned",)
     model = Autor
     success_url = reverse_lazy('authors')
     template_name = "catalog/author_confirm_delete.html"
 
 
-class BookCreateView(PermissionRequiredMixin, CreateView):
+class BookCreateView(BaseExceptions, PermissionRequiredMixin, CreateView):
+    """Создание книги"""
+
     permission_required = ("catalog.can_mark_returned",)
     model = Book
     fields = "__all__"
     template_name = "catalog/book_form.html"
 
 
-class BookUpdate(PermissionRequiredMixin, UpdateView):
+class BookUpdate(BaseExceptions, PermissionRequiredMixin, UpdateView):
+    """Обновление ланных книги"""
+
     permission_required = ("catalog.can_mark_returned",)
     model = Book
     fields = "__all__"
     template_name = "catalog/book_form.html"
 
 
-class BookDelete(PermissionRequiredMixin, DeleteView):
+class BookDelete(BaseExceptions, PermissionRequiredMixin, DeleteView):
+    """Удаление книги"""
+
     permission_required = ("catalog.can_mark_returned",)
     model = Book
     success_url = reverse_lazy('books')
     template_name = "catalog/book_confirm_delete.html"
 
 
-def test(request):
-    genre = Genre.objects.create(name="Army")
-    book = Book.objects.create(title='War', genre=genre, isbn="12385678912", summary='test2')
-    book.genre.add(genre)
-    return HttpResponse("<h1>TEST</h1>")

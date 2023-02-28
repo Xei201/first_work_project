@@ -2,5 +2,5 @@ from django.urls import path, re_path
 from . import views
 
 urlpatterns = [
-    path('all/', views.InitialImportAPIView.as_view(), name="test"),
+    re_path(r'start/$', views.InitialImportAPIView.as_view(), name="transfer-bizon-gk"),
 ]

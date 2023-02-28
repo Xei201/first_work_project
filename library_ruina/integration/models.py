@@ -2,7 +2,7 @@ import uuid
 
 from django.db import models
 from django.contrib.auth.models import User
-from uuid import uuid4
+import uuid
 
 
 def get_default_field_token():
@@ -35,13 +35,14 @@ class TokenImport(models.Model):
     token_gk = models.CharField(max_length=100, default=None, null=True)
     token_bizon = models.CharField(max_length=100, default=None, null=True)
     create = models.DateTimeField(auto_now_add=True)
+    update = models.DateTimeField(auto_now=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
 
     class Meta:
         ordering = ["create"]
 
     def __str__(self):
-        return self.token
+        return str(self.token)
 
 
 class ViewersImport(models.Model):
